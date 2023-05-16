@@ -79,9 +79,6 @@ jobs:
           bin/console doctrine:schema:create --env=dev
           bin/console eccube:fixtures:load --env=dev
 
-      - name: setup-chromedriver
-        uses: nanasess/setup-chromedriver@master
-
       - name: Run chromedriver
         run: |
           export DISPLAY=:99
