@@ -48,20 +48,20 @@ jobs:
           APP_ENV: ${{ matrix.app_env }}
         run: |
           docker compose -f docker-compose.yml -f docker-compose.pgsql.yml -f docker-compose.e2e.yml up -d --build --wait
-          docker compose exec ec-cube bash -c 'echo "APP_ENV=${APP_ENV}" > .env'
-          docker compose exec ec-cube bash -c 'for d in $(ls codeception/_data/plugins | grep 1.0.0); do (cd codeception/_data/plugins/$d; tar zcf ../../../../repos/${d}.tgz *); done'
+          docker compose exec --user=www-data ec-cube bash -c 'echo "APP_ENV=${APP_ENV}" > .env'
+          docker compose exec --user=www-data ec-cube bash -c 'for d in $(ls codeception/_data/plugins | grep 1.0.0); do (cd codeception/_data/plugins/$d; tar zcf ../../../../repos/${d}.tgz *); done'
 
       - name: Setup restrict file upload
         if: ${{ matrix.group == 'restrict-fileupload' }}
-        run: docker compose exec ec-cube bash -c 'echo "ECCUBE_RESTRICT_FILE_UPLOAD=1" >> .env'
+        run: docker compose exec --user=www-data  ec-cube bash -c 'echo "ECCUBE_RESTRICT_FILE_UPLOAD=1" >> .env'
 
       - name: Codeception
         if: ${{ matrix.group != 'restrict-fileupload' }}
-        run: docker compose exec ec-cube vendor/bin/codecept -vvv run acceptance --env chrome,docker -g "${{ matrix.group }}" --skip-group restrict-file-upload --html report.html
+        run: docker compose exec --user=www-data  ec-cube vendor/bin/codecept -vvv run acceptance --env chrome,docker -g "${{ matrix.group }}" --skip-group restrict-file-upload --html report.html
 
       - name: Codeception with Restrict file upload
         if: ${{ matrix.group == 'restrict-fileupload' }}
-        run: docker compose exec ec-cube vendor/bin/codecept -vvv run acceptance --env chrome,docker -g "${{ matrix.group }}" --html report.html
+        run: docker compose exec --user=www-data  ec-cube vendor/bin/codecept -vvv run acceptance --env chrome,docker -g "${{ matrix.group }}" --html report.html
 
       - name: Upload evidence
         if: failure()
