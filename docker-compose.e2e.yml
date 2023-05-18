@@ -11,12 +11,12 @@ services:
       - APP_DEBUG=0
       - WEB_DRIVER_HOST=browser
       - WEB_DRIVER_PORT=4444
-      - BASE_URL=http://ec-cube
+      - BASE_URL=https://ec-cube
       - MAILCATCHER_HOST=mailcatcher
       - ECCUBE_RESTRICT_FILE_UPLOAD=${ECCUBE_RESTRICT_FILE_UPLOAD:-0}
     volumes:
       - downloads:/var/www/html/codeception/_support/_downloads
-      - ./codeception/_output:/var/www/html/codeception/_output
+      - ./codeception:/var/www/html/codeception
       - ./var/log:/var/www/html/var/log
       - repos:/var/www/html/repos
 
@@ -35,10 +35,12 @@ services:
       - TZ=Asia/Tokyo
       - SCREEN_WIDTH=1680
       - SCREEN_HEIGHT=1020
+      - VNC_NO_PASSWORD=1
     volumes:
       - downloads:/home/seluser/Downloads
     ports:
       - "5900:5900"
+      - "7900:7900"
     networks:
       - backend
 
