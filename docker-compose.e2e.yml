@@ -7,7 +7,7 @@ services:
       args:
         - TAG=8.1-apache
     environment:
-      - APP_ENV=prod
+      - APP_ENV=${APP_ENV}
       - APP_DEBUG=0
       - WEB_DRIVER_HOST=browser
       - WEB_DRIVER_PORT=4444
