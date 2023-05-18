@@ -14,6 +14,7 @@ services:
       - BASE_URL=https://ec-cube
       - MAILCATCHER_HOST=mailcatcher
       - ECCUBE_RESTRICT_FILE_UPLOAD=${ECCUBE_RESTRICT_FILE_UPLOAD:-0}
+      - TRUSTED_HOSTS=.*
     volumes:
       - downloads:/var/www/html/codeception/_support/_downloads
       - ./codeception:/var/www/html/codeception
