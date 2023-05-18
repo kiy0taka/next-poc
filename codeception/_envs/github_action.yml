@@ -6,6 +6,7 @@ modules:
             url: 'http://127.0.0.1:8000'
             capabilities:
                 chromeOptions:
+                    args: ["--headless", "--disable-dev-shm-usage"]
                     prefs:
                         download.default_directory: '%GITHUB_WORKSPACE%/codeception/_support/_downloads'
         MailCatcher:
