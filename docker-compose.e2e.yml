@@ -13,6 +13,7 @@ services:
       - WEB_DRIVER_PORT=4444
       - BASE_URL=http://ec-cube
       - MAILCATCHER_HOST=mailcatcher
+      - ECCUBE_RESTRICT_FILE_UPLOAD=${ECCUBE_RESTRICT_FILE_UPLOAD:-0}
     volumes:
       - downloads:/var/www/html/codeception/_support/_downloads
       - ./codeception/_output:/var/www/html/codeception/_output

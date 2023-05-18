@@ -19,13 +19,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ 7.4 ]
-        db: [ pgsql ]
         group: [ 'admin01', 'admin02', 'admin03', 'front', 'restrict-fileupload', 'installer' ]
         include:
-          - db: pgsql
-            database_url: postgres://postgres:password@127.0.0.1:5432/eccube_db
-            database_server_version: 14
           - group: 'admin01'
             app_env: 'codeception'
           - group: 'admin02'
@@ -36,6 +31,7 @@ jobs:
             app_env: 'codeception'
           - group: 'restrict-fileupload'
             app_env: 'codeception'
+            restrict_fileupload: 1
           - group: 'installer'
             app_env: 'install'
 
@@ -46,14 +42,11 @@ jobs:
       - name: Setup to EC-CUBE
         env:
           APP_ENV: ${{ matrix.app_env }}
+          ECCUBE_RESTRICT_FILE_UPLOAD:  ${{  matrix.restrict_fileupload}}
         run: |
           docker compose -f docker-compose.yml -f docker-compose.pgsql.yml -f docker-compose.e2e.yml up -d --build --wait
           docker compose exec --user=www-data ec-cube bash -c 'echo "APP_ENV=${APP_ENV}" > .env'
           docker compose exec --user=www-data ec-cube bash -c 'for d in $(ls codeception/_data/plugins | grep 1.0.0); do (cd codeception/_data/plugins/$d; tar zcf ../../../../repos/${d}.tgz *); done'
-
-      - name: Setup restrict file upload
-        if: ${{ matrix.group == 'restrict-fileupload' }}
-        run: docker compose exec --user=www-data  ec-cube bash -c 'echo "ECCUBE_RESTRICT_FILE_UPLOAD=1" >> .env'
 
       - name: Codeception
         if: ${{ matrix.group != 'restrict-fileupload' }}
@@ -69,6 +62,7 @@ jobs:
         with:
           name: codeception-${{ matrix.group }}-evidence
           path: codeception/_output/
+
       - name: Upload logs
         if: failure()
         uses: actions/upload-artifact@v2
