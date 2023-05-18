@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  ec-cube:
+    build:
+      context: .
+      args:
+        - TAG=8.1-apache
+    environment:
+      - APP_ENV=prod
+      - APP_DEBUG=0
+      - WEB_DRIVER_HOST=browser
+      - WEB_DRIVER_PORT=4444
+      - BASE_URL=http://ec-cube
+      - MAILCATCHER_HOST=mailcatcher
+    volumes:
+      - downloads:/var/www/html/codeception/_support/_downloads
+      - ./codeception/_output:/var/www/html/codeception/_output
+      - ./var/log:/var/www/html/var/log
+      - repos:/var/www/html/repos
+
+  package-api:
+    image: eccube/mock-package-api:composer2
+    environment:
+      - MOCK_REPO_DIR=/repos
+    volumes:
+      - repos:/repos
+  browser:
+    build:
+      dockerfile_inline: |
+        FROM selenium/standalone-chrome
+        USER root
+    environment:
+      - TZ=Asia/Tokyo
+      - SCREEN_WIDTH=1680
+      - SCREEN_HEIGHT=1020
+    volumes:
+      - downloads:/home/seluser/Downloads
+    ports:
+      - "5900:5900"
+    networks:
+      - backend
+
+volumes:
+  downloads:
+  repos:

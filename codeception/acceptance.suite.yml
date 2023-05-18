@@ -71,3 +71,13 @@ env:
                             args: ["--headless", "--disable-gpu"]
                             prefs:
                                 download.default_directory: '%PWD%/codeception/_support/_downloads'
+    docker:
+        modules:
+            config:
+                WebDriver:
+                    browser: chrome
+                    capabilities:
+                        chromeOptions:
+                            args: ["--disable-dev-shm-usage"]
+                            prefs:
+                                download.default_directory: '/home/seluser/Downloads'
