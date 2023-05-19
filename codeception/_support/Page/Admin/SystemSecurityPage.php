@@ -54,6 +54,7 @@ class SystemSecurityPage extends AbstractAdminPageStyleGuide
     {
         $this->tester->click('#page_admin_setting_system_security form div.c-contentsArea__cols > div.c-conversionArea > div > div > div:nth-child(2) > div > div > button');
         $this->tester->see('保存しました');
+        $this->tester->wait(3);
 
         return $this;
     }

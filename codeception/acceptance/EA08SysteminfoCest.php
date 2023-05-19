@@ -304,11 +304,13 @@ class EA08SysteminfoCest
 
         $I->fillField(['id' => 'admin_security_admin_route_dir'], 'admin2');
         $I->click('#page_admin_setting_system_security form div.c-contentsArea__cols > div.c-conversionArea > div > div > div:nth-child(2) > div > div > button');
+        $I->wait(3);
         $I->loginAsAdmin('', '', 'admin2');
 
         $I->amOnPage('/admin2/setting/system/security');
         $I->fillField(['id' => 'admin_security_admin_route_dir'], $config['eccube_admin_route']);
         $I->click('#page_admin_setting_system_security form div.c-contentsArea__cols > div.c-conversionArea > div > div > div:nth-child(2) > div > div > button');
+        $I->wait(3);
         $I->loginAsAdmin();
     }
 
@@ -671,6 +673,7 @@ class EA08SysteminfoCest
 
         $I->fillField(['id' => 'admin_security_admin_allow_hosts'], '1.1.1.1');
         $I->click('#page_admin_setting_system_security form div.c-contentsArea__cols > div.c-conversionArea > div > div > div:nth-child(2) > div > div > button');
+        $I->wait(3);
 
         $I->amOnPage('/'.$config['eccube_admin_route']);
         $I->see('アクセスできません。', '//*[@id="error-page"]//h3');

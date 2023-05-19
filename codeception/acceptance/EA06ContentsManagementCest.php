@@ -565,6 +565,7 @@ class EA06ContentsManagementCest
         $I->click('.c-contentsArea .btn-ec-conversion');
         $I->waitForElement('.alert', 10);
         $I->waitForText('削除しました', 10, '.alert');
+        $I->wait(3);
 
         $I->expect('トップページを確認します');
         $I->amOnPage('/');
