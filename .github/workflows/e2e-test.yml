@@ -41,11 +41,10 @@ jobs:
 
       - name: Setup to EC-CUBE
         env:
-          APP_ENV: ${{ matrix.app_env }}
           ECCUBE_RESTRICT_FILE_UPLOAD:  ${{  matrix.restrict_fileupload}}
         run: |
           docker compose -f docker-compose.yml -f docker-compose.pgsql.yml -f docker-compose.e2e.yml up -d --build --wait
-          docker compose exec --user=www-data ec-cube bash -c 'echo "APP_ENV=${APP_ENV}" > .env'
+          docker compose exec --user=www-data ec-cube bash -c 'echo "APP_ENV=${{ matrix.app_env }}" > .env'
           docker compose exec --user=www-data ec-cube bash -c 'for d in $(ls codeception/_data/plugins | grep 1.0.0); do (cd codeception/_data/plugins/$d; tar zcf ../../../../repos/${d}.tgz *); done'
 
       - name: Codeception

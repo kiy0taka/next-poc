@@ -33,7 +33,6 @@ services:
       - "node_modules:/var/www/html/node_modules"
     environment:
       # EC-CUBE environments
-      APP_ENV: "dev"
       APP_DEBUG: 1
       DATABASE_URL: "sqlite:///var/eccube.db"
       DATABASE_SERVER_VERSION: 3
