@@ -2,8 +2,12 @@ version: '3'
 
 services:
   ec-cube:
+    build:
+      target: develop
     environment:
       USER_ID: ${UID:-}
       GROUP_ID: ${GID:-}
     volumes:
       - ".:/var/www/html:cached"
+    ports:
+      - 5993:5993

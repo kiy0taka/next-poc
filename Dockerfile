@@ -1,5 +1,5 @@
 ARG TAG=8.1-apache-bullseye
-FROM php:${TAG}
+FROM php:${TAG} as base
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html
 
@@ -70,6 +70,43 @@ RUN curl -sS https://getcomposer.org/installer \
 
 RUN composer config -g repos.packagist composer https://packagist.jp
 
+HEALTHCHECK --interval=10s --timeout=5s --retries=30 CMD pgrep apache
+
+FROM base as develop
+
+RUN git config --global --add safe.directory ${APACHE_DOCUMENT_ROOT}
+
+# Setup JetBrains Gateway
+ARG IDEURL=https://download.jetbrains.com/idea/ideaIU-2023.1.3.tar.gz
+ENV REMOTE_DEV_JDK_DETECTION=true
+RUN cd /opt && \
+  curl -fsSL -o ide.tar.gz $IDEURL && \
+  mkdir ide && \
+  tar xfz ide.tar.gz --strip-components=1 -C ide && \
+  rm ide.tar.gz
+
+RUN /opt/ide/bin/remote-dev-server.sh installPlugins ${APACHE_DOCUMENT_ROOT} \
+  com.jetbrains.php \
+  com.jetbrains.twig \
+  de.espend.idea.php.annotation \
+  fr.adrienbrault.idea.symfony2plugin
+
+
+# Setup Xdebug
+ENV COMPOSER_ALLOW_XDEBUG=1
+ENV XDEBUG_SESSION=eccube
+RUN pecl install xdebug && \
+  docker-php-ext-enable xdebug && \
+  { \
+    echo 'xdebug.mode=debug'; \
+    echo 'xdebug.remote_enable=true'; \
+    echo 'xdebug.remote_host=localhost'; \
+    echo 'xdebug.remote_port=9003'; \
+  } >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini
+
+
+FROM base as test
+
 COPY . ${APACHE_DOCUMENT_ROOT}
 WORKDIR ${APACHE_DOCUMENT_ROOT}
 
@@ -79,4 +116,3 @@ RUN find ${APACHE_DOCUMENT_ROOT} \( -path ${APACHE_DOCUMENT_ROOT}/vendor -prune 
   | xargs -0 chmod g+s \
   ;
 
-HEALTHCHECK --interval=10s --timeout=5s --retries=30 CMD pgrep apache
